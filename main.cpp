@@ -26,8 +26,13 @@
 #include "rtos.h"
 
 #if MBED_CONF_APP_NETWORK_INTERFACE == WIFI
-#include "ESP8266Interface.h"
-ESP8266Interface esp(MBED_CONF_APP_WIFI_TX, MBED_CONF_APP_WIFI_RX);
+    #if TARGET_UBLOX_EVK_ODIN_W2
+        #include "OdinWiFiInterface.h"
+        OdinWiFiInterface wifi;
+    #else
+        #include "ESP8266Interface.h"
+        ESP8266Interface wifi(MBED_CONF_APP_WIFI_TX, MBED_CONF_APP_WIFI_RX);
+    #endif
 #elif MBED_CONF_APP_NETWORK_INTERFACE == ETHERNET
 #include "EthernetInterface.h"
 EthernetInterface eth;
@@ -387,8 +392,8 @@ Add MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES and MBEDTLS_TEST_NULL_ENTROPY in mbed_app
 #if MBED_CONF_APP_NETWORK_INTERFACE == WIFI
     output.printf("\n\rUsing WiFi \r\n");
     output.printf("\n\rConnecting to WiFi..\r\n");
-    connect_success = esp.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD);
-    network_interface = &esp;
+    connect_success = wifi.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD);
+    network_interface = &wifi;
 #elif MBED_CONF_APP_NETWORK_INTERFACE == ETHERNET
     output.printf("Using Ethernet\r\n");
     connect_success = eth.connect();
