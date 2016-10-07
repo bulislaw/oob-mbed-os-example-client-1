@@ -34,35 +34,35 @@
         ESP8266Interface wifi(MBED_CONF_APP_WIFI_TX, MBED_CONF_APP_WIFI_RX);
     #endif
 #elif MBED_CONF_APP_NETWORK_INTERFACE == ETHERNET
-#include "EthernetInterface.h"
-EthernetInterface eth;
+    #include "EthernetInterface.h"
+    EthernetInterface eth;
 #elif MBED_CONF_APP_NETWORK_INTERFACE == MESH_LOWPAN_ND
-#define MESH
-#include "NanostackInterface.h"
-LoWPANNDInterface mesh;
+    #define MESH
+    #include "NanostackInterface.h"
+    LoWPANNDInterface mesh;
 #elif MBED_CONF_APP_NETWORK_INTERFACE == MESH_THREAD
-#define MESH
-#include "NanostackInterface.h"
-ThreadInterface mesh;
+    #define MESH
+    #include "NanostackInterface.h"
+    ThreadInterface mesh;
 #endif
 
 #if defined(MESH)
-#if MBED_CONF_APP_MESH_RADIO_TYPE == ATMEL
-#include "NanostackRfPhyAtmel.h"
-NanostackRfPhyAtmel rf_phy(ATMEL_SPI_MOSI, ATMEL_SPI_MISO, ATMEL_SPI_SCLK, ATMEL_SPI_CS,
-                           ATMEL_SPI_RST, ATMEL_SPI_SLP, ATMEL_SPI_IRQ, ATMEL_I2C_SDA, ATMEL_I2C_SCL);
-#elif MBED_CONF_APP_MESH_RADIO_TYPE == MCR20
-#include "NanostackRfPhyMcr20a.h"
-NanostackRfPhyMcr20a rf_phy(MCR20A_SPI_MOSI, MCR20A_SPI_MISO, MCR20A_SPI_SCLK, MCR20A_SPI_CS, MCR20A_SPI_RST, MCR20A_SPI_IRQ);
-#endif //MBED_CONF_APP_RADIO_TYPE
+    #if MBED_CONF_APP_MESH_RADIO_TYPE == ATMEL
+        #include "NanostackRfPhyAtmel.h"
+        NanostackRfPhyAtmel rf_phy(ATMEL_SPI_MOSI, ATMEL_SPI_MISO, ATMEL_SPI_SCLK, ATMEL_SPI_CS,
+                                   ATMEL_SPI_RST, ATMEL_SPI_SLP, ATMEL_SPI_IRQ, ATMEL_I2C_SDA, ATMEL_I2C_SCL);
+    #elif MBED_CONF_APP_MESH_RADIO_TYPE == MCR20
+        #include "NanostackRfPhyMcr20a.h"
+        NanostackRfPhyMcr20a rf_phy(MCR20A_SPI_MOSI, MCR20A_SPI_MISO, MCR20A_SPI_SCLK, MCR20A_SPI_CS, MCR20A_SPI_RST, MCR20A_SPI_IRQ);
+    #endif //MBED_CONF_APP_RADIO_TYPE
 #endif //MESH
 
 #ifndef MESH
-// This is address to mbed Device Connector
-#define MBED_SERVER_ADDRESS "coap://api.connector.mbed.com:5684"
+    // This is address to mbed Device Connector
+    #define MBED_SERVER_ADDRESS "coap://api.connector.mbed.com:5684"
 #else
-// This is address to mbed Device Connector
-#define MBED_SERVER_ADDRESS "coaps://[2607:f0d0:2601:52::20]:5684"
+    // This is address to mbed Device Connector
+    #define MBED_SERVER_ADDRESS "coaps://[2607:f0d0:2601:52::20]:5684"
 #endif
 
 Serial output(USBTX, USBRX);
