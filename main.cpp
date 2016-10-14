@@ -459,7 +459,13 @@ Add MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES and MBEDTLS_TEST_NULL_ENTROPY in mbed_app
         updates.wait(25000);
         if(registered) {
             if(!clicked) {
-                mbed_client.test_update_register();
+                // Send regular update registration message only in UDP mode to keep the
+                // NAT firewall open so that incoming REST API calls can reach the client
+                // In case of TCP mode, this will be handled through TCP keep alive mode
+                if(SOCKET_MODE == M2MInterface::UDP) {
+                    output.printf("Sending registration update\r\n");
+                    mbed_client.test_update_register();
+                }
             }
         }else {
             break;

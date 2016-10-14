@@ -42,7 +42,7 @@
 M2MInterface::NetworkStack NETWORK_STACK = M2MInterface::LwIP_IPv4;
 
 //Select binding mode: UDP or TCP
-M2MInterface::BindingMode SOCKET_MODE = M2MInterface::UDP;
+M2MInterface::BindingMode SOCKET_MODE = M2MInterface::TCP;
 
 
 // MBED_DOMAIN and MBED_ENDPOINT_NAME come
@@ -118,7 +118,7 @@ public:
     _interface = M2MInterfaceFactory::create_interface(*this,
                                                       MBED_ENDPOINT_NAME,       // endpoint name string
                                                       "test",                   // endpoint type string
-                                                      100,                      // lifetime
+                                                      60,                      // lifetime
                                                       port,                     // listen port
                                                       MBED_DOMAIN,              // domain string
                                                       SOCKET_MODE,              // binding mode
