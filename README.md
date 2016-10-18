@@ -249,7 +249,7 @@ To build the example using mbed CLI:
     mbed compile -m K64F -t GCC_ARM -c
     ```
 
-    mbed CLI builds a binary file under the project’s `.build` directory.
+    mbed CLI builds a binary file under the project’s `BUILD/` directory.
 
 5. Plug the Ethernet cable into the board if you are using Ethernet mode.
 
@@ -257,7 +257,7 @@ To build the example using mbed CLI:
 
 7. Plug the micro-USB cable into the **OpenSDA** port. The board is listed as a mass-storage device.
 
-8. Drag the binary `.build/K64F/GCC_ARM/mbed-os-example-client.bin` to the board to flash the application.
+8. Drag the binary `BUILD/K64F/GCC_ARM/mbed-os-example-client.bin` to the board to flash the application.
 
 9. The board is automatically programmed with the new binary. A flashing LED on it indicates that it is still working. When the LED stops blinking, the board is ready to work.
 
@@ -300,13 +300,15 @@ handle_button_click, new value of counter is 1
 ## Testing the application
 
 1. Flash the application.
-1. Verify that the registration succeeded. You should see `Registered object successfully!` printed to the serial port.
-1. On mbed Device Connector, go to [My devices > Connected devices](https://connector.mbed.com/#endpoints). Your device should be listed here.
-1. Press the `SW2` button on the device a number of times (make a note of how many times you did that).
-1. Go to [Device Connector > API Console](https://connector.mbed.com/#console).
-1. Enter `https://api.connector.mbed.com/endpoints/DEVICE_NAME/3200/0/5501` in the URI field and click **TEST API**. Replace `DEVICE_NAME` with your actual endpoint name. The device name can be found in the `security.h` file, see variable `MBED_ENDPOINT_NAME` or it can be found from the traces [Monitoring the application](https://github.com/ARMmbed/mbed-os-example-client#monitoring-the-application).
-1. The number of times you pressed `SW2` is shown.
-1. Press the `SW3` button to unregister from mbed Device Connector. You should see `Unregistered Object Successfully` printed to the serial port and the LED starts blinking. This will also stop your application. Press the `RESET` button to run the program again.
+2. Verify that the registration succeeded. You should see `Registered object successfully!` printed to the serial port.
+3. On mbed Device Connector, go to [My devices > Connected devices](https://connector.mbed.com/#endpoints). Your device should be listed here.
+4. Press the `SW2` button on the device a number of times (make a note of how many times you did that).
+5. Go to [Device Connector > API Console](https://connector.mbed.com/#console).
+6. Click at _Endpoint directory lookups_ drop down menu.
+![](/docs/img/ep_lookup.PNG) 
+7. In the menu, click _GET_ button correponding to _Endpoint's resource representation_. Select your _endpoint_ and _resource-path_. For example, the _endpoint_ is the identifier of your endpoint whcih can be found in `security.h` as `MBED_ENDPOINT_NAME`. Choose `3200/0/5501`as a resource path and click **TEST API**. 
+8. The number of times you pressed `SW2` is shown.
+9. Press the `SW3` button to unregister from mbed Device Connector. You should see `Unregistered Object Successfully` printed to the serial port and the LED starts blinking. This will also stop your application. Press the `RESET` button to run the program again.
 
 <span class="notes">**Note:** On non K64F boards, there is no unregistration functionality and button press is simulated through timer ticks incrementing every 15 seconds.</span>
 
@@ -325,25 +327,3 @@ The application exposes three [resources](https://docs.mbed.com/docs/mbed-device
 3. `3201/0/5853`. Blink pattern, used by the blink function to determine how to blink. In the format of `1000:500:1000:500:1000:500` (PUT).
 
 For information on how to get notifications when resource 1 changes, or how to use resources 2 and 3, take a look at the [mbed Device Connector Quick Start](https://github.com/ARMmbed/mbed-connector-api-node-quickstart).
-
-## Important note (Multi-platform support)
-
-mbed-OS provides the developer with total control of the device. However, some defaults are always loaded if the user does not provide proper information regarding them. This becomes evident when a user switches among platforms. On some platforms, a particular pin might be reserved for a particular functionality (depending upon the MCU) which thus cannot be used generally. A good example of such phenomenon is the use of Atmel RF shield with [Nucleo F401RE platform](https://developer.mbed.org/platforms/ST-Nucleo-F401RE/). 
-If the user does not provide a particular pin configuration for the Atmel RF driver (sometimes a desired behaviour) the driver falls back to a default Arduino form factor, see [atmel-rf-driver pin assignment](https://github.com/ARMmbed/atmel-rf-driver/blob/master/source/driverAtmelRFInterface.h). This fallback mechanism works on most of the platforms, however in the above mentioned case, there is a catch. The fallback mechanism sets the GPIO pin D5 as a designated Reset pin for SPI (SPI_RST) in the radio driver. Whereas this particular pin is assigned by the MCU to debugging in Nucleo F401RE. This will result in a hard fault. The solution is to map the conflicting pins to a free GPIO pin. For example, the user can add *"atmel-rf.spi-rst": "D4"* to his/her `mbed_app.json` file. This will set the SPI_RST pin to D4 of the GPIO. 
-
-```json
-{
-    "target_overrides": {
-        "*": {
-            "target.features_add": ["IPV6", "COMMON_PAL"],
-            "atmel-rf.spi-rst": "D4"
-        }
-    }
-}
-```
-
-Desired work flow in such situations:
-
-1. Check the platform pinmap from [mbed Platforms](https://developer.mbed.org/platforms/).
-2. Make sure that the desired GPIO pin is free by looking at the data sheet of the particular MCU. Most of the data sheets are available on [mbed Platforms](https://developer.mbed.org/platforms/). 
-3. If necessary, change the pin or pins by using the mbed-OS config mechanism. Read more about the configuration system in the [documentation](https://github.com/ARMmbed/mbed-os/blob/master/docs/config_system.md).
